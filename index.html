@@ -8,56 +8,40 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="nav-bar"></div>
-
-    <div id="app">
-        
+    <div class="nav-bar">
+      <img src="./assets/img/logo.png" class="logo">
+    </div>
+    <div id="app"> 
         <div class="product">
-        
             <div class="product-image">
                 <img v-bind:src="image" />
             </div>
-        
             <div class="product-info">
                 <h1>{{ product }}</h1>
                 <p v-if="inStock">In Stock</p>
-                <p v-else>Out of Stock</p>
+                <p v-else>Out of Stock :(</p>
+
                 <ul>
-                    <li v-for="detail in details">{{ detail }}</li>
+                  <li v-for="detail in details">{{ detail }}</li>
                 </ul>
-                <ul>
-                    <li v-for="size in sizes">{{ size }}</li>
-                </ul>
-                <div v-for="variant in variants" v-bind:key="variant.variantId">
-                    <p>{{ variant.variantColor }}</p>
+
+                <div v-for="variant in variants" v-bind:key="variant.id">
+                    <p>
+                      {{variant.color}}
+                    </p>
                 </div>
-            </div> 
+
+                <button v-on:click="cart += 1">Add to Cart</button>
+
+                <div class="cart">
+                  <p>Cart ({{cart}})</p>
+                </div>
+
+            </div>
+
         </div>
-        
     </div>
-        
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
-        <script>
-        var app = new Vue({
-          el: '#app',
-          data: {
-            product: 'Socks',
-            image: 'https://www.vuemastery.com/images/challenges/vmSocks-green-onWhite.jpg',
-            inStock: true,
-            details: ['80% cotton', '20% polyester', 'Gender-neutral'],
-            sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            variants: [
-              {
-                variantId: 2234,
-                variantColor: 'green'    
-              },
-              {
-                variantId: 2235,
-                variantColor: 'blue'
-              }
-            ]
-          } 
-        });
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
