@@ -9,13 +9,24 @@ var app = new Vue({
         variants: [
             {
                 id: 1,
-                color: 'White'
+                color: 'White',
+                image: './assets/img/socks1.jpg'
             },
             {
                 id: 2,
-                color: 'Blue'
+                color: 'Blue',
+                image: './assets/img/socks2.jpg'
             }
         ],
         cart: 0
-    } 
+    }, 
+    methods: {
+        addToCart: function() {
+            this.cart += 1;
+        },
+        updateProduct: function(variantImage) {
+            this.image = variantImage
+        }
+
+    }
 })

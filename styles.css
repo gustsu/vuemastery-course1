@@ -49,9 +49,13 @@ img {
 }
 
 .color-box {
-  width: 40px;
-  height: 40px;
-  margin-top: 5px;
+  width: 60px;
+  height: 60px;
+  margin-right: 5px;
+  margin-top: 20px;
+  display: inline-block;
+  /* box-shadow: 0px 2px 4px rgba(0,0,0,.2); */
+  border: 2px solid black;
 }
 
 .cart {
@@ -72,6 +76,7 @@ button {
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: pointer;
+  display: block;
 } 
 
 .disabledButton {
