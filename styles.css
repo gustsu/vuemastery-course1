@@ -61,8 +61,11 @@ img {
 .cart {
   margin-right: 25px;
   float: right;
-  border: 1px solid #d8d8d8;
   padding: 0px 20px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
 }
 
 button {
@@ -75,7 +78,7 @@ button {
   font-size: 15px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  cursor: pointer;
+  cursor: pointer;  
   display: block;
 } 
 

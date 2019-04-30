@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,7 +16,7 @@
                 <img v-bind:src="image" />
             </div>
             <div class="product-info">
-                <h1>{{ product }}</h1>
+                <h1>{{title}}</h1>
                 <p v-if="inStock">In Stock</p>
                 <p v-else>Out of Stock :(</p>
 
@@ -25,11 +24,11 @@
                   <li v-for="detail in details">{{ detail }}</li>
                 </ul>
 
-                <div v-for="variant in variants" 
+                <div v-for="(variant, index) in variants" 
                      v-bind:key="variant.id"
                      class="color-box"
                      v-bind:style="{ backgroundColor: variant.color}"
-                     @mouseover="updateProduct(variant.image)">
+                     @mouseover="updateProduct(index)">
                 </div>
 
                 <button v-bind:disabled="!inStock"  v-bind:class="{ disabledButton: !inStock }" v-on:click="addToCart">Add to Cart</button>
