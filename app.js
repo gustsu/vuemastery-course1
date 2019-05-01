@@ -14,7 +14,7 @@ Vue.component('product', {
             <h1>{{title}}</h1>
             <p v-if="inStock">In Stock</p>
             <p v-else class="out-of-stock">Out of Stock</p>
-            <p>User is premium: {{premium}}</p>
+            <p>Shipping: {{shipping}}</p>
             <ul>
             <li v-for="detail in details">{{ detail }}</li>
             </ul>
@@ -25,9 +25,6 @@ Vue.component('product', {
                 @mouseover="updateProduct(index)">
             </div>
             <button v-bind:disabled="!inStock"  v-bind:class="{ disabledButton: !inStock }" v-on:click="addToCart">Add to Cart</button>
-            <div class="cart">
-            <p>Cart ({{cart}})</p>
-            </div>
         </div>
     </div>
     `,
@@ -57,13 +54,12 @@ Vue.component('product', {
                     image: './assets/img/socks3.jpg',
                     quantity: 20
                 }
-            ],
-            cart: 0
+            ]
         }
     }, 
     methods: {
         addToCart: function() {
-            this.cart += 1
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
         },
         updateProduct: function(i) {
             this.selectedVariant = i
@@ -72,13 +68,16 @@ Vue.component('product', {
     },
     computed: {
         title: function() {
-            return this.brand + ' ' + this.product;
+            return this.brand + ' ' + this.product
         },
         image: function() {
-            return this.variants[this.selectedVariant].image;
+            return this.variants[this.selectedVariant].image
         },
         inStock: function() {
-            return this.variants[this.selectedVariant].quantity;
+            return this.variants[this.selectedVariant].quantity
+        },
+        shipping: function() {
+            return this.premium ? 'Free' : '$2.99'
         }
     }
 })
@@ -86,6 +85,12 @@ Vue.component('product', {
 var app = new Vue({
     el: '#app',
     data: {
-        premium: true
+        premium: true,
+        cart: []
+    },
+    methods: {
+        updateCart: function(id) {
+            this.cart.push(id)
+        }
     }
 })
