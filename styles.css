@@ -32,6 +32,10 @@ h1 {
   display: flex;
 }
 
+.product .flex-item {
+  flex: 0 0 25%;
+}
+
 img {
   border: 1px solid #d8d8d8;
   width: 70%;

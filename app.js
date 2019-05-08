@@ -7,10 +7,10 @@ Vue.component('product', {
     },
     template: `
     <div class="product">
-        <div class="product-image">
+        <div class="product-image flex-item">
             <img v-bind:src="image" />
         </div>
-        <div class="product-info">
+        <div class="product-info flex-item">
             <h1>{{title}}</h1>
             <p v-if="inStock">In Stock</p>
             <p v-else class="out-of-stock">Out of Stock</p>
@@ -26,6 +26,19 @@ Vue.component('product', {
             </div>
             <button v-bind:disabled="!inStock"  v-bind:class="{ disabledButton: !inStock }" v-on:click="addToCart">Add to Cart</button>
         </div>
+        <div class="reviews flex-item">
+            <h2>Reviews</h2>
+            <p v-if="!reviews.length">There are no reviews yet.</p>
+            <ul>
+            <li v-for="review in reviews">
+            <p>{{ review.name }}</p>
+            <p>Rating: {{ review.rating }}</p>
+            <p>{{ review.review }}</p>
+            </li>
+            </ul>
+        </div>
+
+        <product-review @review-submitted="addReview"></product-review>
     </div>
     `,
     data: function(){
@@ -54,31 +67,87 @@ Vue.component('product', {
                     image: './assets/img/socks3.jpg',
                     quantity: 20
                 }
-            ]
+            ],
+            reviews: []
         }
     }, 
     methods: {
-        addToCart: function() {
+        addToCart() {
             this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
         },
-        updateProduct: function(i) {
+        updateProduct(i) {
             this.selectedVariant = i
+        },
+        addReview(productReview) {
+            this.reviews.push(productReview)
         }
 
     },
     computed: {
-        title: function() {
+        title() {
             return this.brand + ' ' + this.product
         },
-        image: function() {
+        image() {
             return this.variants[this.selectedVariant].image
         },
-        inStock: function() {
+        inStock() {
             return this.variants[this.selectedVariant].quantity
         },
-        shipping: function() {
+        shipping() {
             return this.premium ? 'Free' : '$2.99'
         }
+    }
+})
+
+Vue.component('product-review', {
+    template: `
+    <form class="review-form" @submit.prevent="onSubmit">
+        <p>
+        <label for="name">Name:</label>
+        <input id="name" v-model="name" placeholder="name">
+        </p>
+        
+        <p>
+        <label for="review">Review:</label>      
+        <textarea id="review" v-model="review"></textarea>
+        </p>
+        
+        <p>
+        <label for="rating">Rating:</label>
+        <select id="rating" v-model.number="rating">
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+        </select>
+        </p>
+            
+        <p>
+        <input type="submit" value="Submit">  
+        </p>    
+    
+    </form>
+    `,
+    methods: {
+        onSubmit() {
+            let productReview = {
+                name: this.name,
+                review: this.review,
+                rating: this.rating
+            }
+            this.$emit('review-submitted', productReview)
+            this.name = null
+            this.review = null
+            this.rating = null
+        }
+    },
+    data() {
+      return {
+        name: null,
+        review: null,
+        rating: null,  
+      }
     }
 })
 
@@ -89,7 +158,7 @@ var app = new Vue({
         cart: []
     },
     methods: {
-        updateCart: function(id) {
+        updateCart(id) {
             this.cart.push(id)
         }
     }
