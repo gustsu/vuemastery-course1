@@ -102,14 +102,24 @@ Vue.component('product', {
 Vue.component('product-review', {
     template: `
     <form class="review-form" @submit.prevent="onSubmit">
+
+        <p v-if="errors.length">
+            <strong>Please correct:</strong>
+            <ul>
+                <li v-for="error in errors">
+                    {{error}}
+                </li>
+            </ul>
+        </p>
+
         <p>
-        <label for="name">Name:</label>
-        <input id="name" v-model="name" placeholder="name">
+            <label for="name">Name:</label>
+            <input id="name" v-model="name" placeholder="name">
         </p>
         
         <p>
-        <label for="review">Review:</label>      
-        <textarea id="review" v-model="review"></textarea>
+            <label for="review">Review:</label>      
+            <textarea id="review" v-model="review"></textarea>
         </p>
         
         <p>
@@ -131,15 +141,23 @@ Vue.component('product-review', {
     `,
     methods: {
         onSubmit() {
-            let productReview = {
-                name: this.name,
-                review: this.review,
-                rating: this.rating
+            this.errors = [] //empty out the errors
+            if (this.name && this.review && this.rating) {
+                let productReview = {
+                    name: this.name,
+                    review: this.review,
+                    rating: this.rating
+                }
+                this.$emit('review-submitted', productReview)
+                this.name = null
+                this.review = null
+                this.rating = null
             }
-            this.$emit('review-submitted', productReview)
-            this.name = null
-            this.review = null
-            this.rating = null
+            else {
+                if (!this.name) { this.errors.push('Name is Required') }
+                if (!this.review) { this.errors.push('Review is Required') }
+                if (!this.rating) { this.errors.push('Rating is Required') }
+            }
         }
     },
     data() {
@@ -147,6 +165,7 @@ Vue.component('product-review', {
         name: null,
         review: null,
         rating: null,  
+        errors: []
       }
     }
 })
