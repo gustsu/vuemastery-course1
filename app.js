@@ -1,3 +1,7 @@
+var eventBus = new Vue (
+
+)
+
 Vue.component('product', {
     props: {
         premium: {
@@ -7,38 +11,28 @@ Vue.component('product', {
     },
     template: `
     <div class="product">
-        <div class="product-image flex-item">
+        <div class="product-image">
             <img v-bind:src="image" />
         </div>
-        <div class="product-info flex-item">
+        <div class="product-info">
             <h1>{{title}}</h1>
             <p v-if="inStock">In Stock</p>
             <p v-else class="out-of-stock">Out of Stock</p>
             <p>Shipping: {{shipping}}</p>
             <ul>
-            <li v-for="detail in details">{{ detail }}</li>
+                 <li v-for="detail in details">{{ detail }}</li>
             </ul>
             <div v-for="(variant, index) in variants" 
                 v-bind:key="variant.id"
                 class="color-box"
                 v-bind:style="{ backgroundColor: variant.color}"
-                @mouseover="updateProduct(index)">
+                @click="updateProduct(index)">
             </div>
+            <span class="helper-text">(click for more info)</span>
             <button v-bind:disabled="!inStock"  v-bind:class="{ disabledButton: !inStock }" v-on:click="addToCart">Add to Cart</button>
         </div>
-        <div class="reviews flex-item">
-            <h2>Reviews</h2>
-            <p v-if="!reviews.length">There are no reviews yet.</p>
-            <ul>
-            <li v-for="review in reviews">
-            <p>{{ review.name }}</p>
-            <p>Rating: {{ review.rating }}</p>
-            <p>{{ review.review }}</p>
-            </li>
-            </ul>
-        </div>
 
-        <product-review @review-submitted="addReview"></product-review>
+        <product-tabs :reviews="reviews"></product-tabs>
     </div>
     `,
     data: function(){
@@ -51,13 +45,13 @@ Vue.component('product', {
             variants: [
                 {
                     id: 1,
-                    color: '#ffffff',
+                    color: '#fa4d72',
                     image: './assets/img/socks1.jpg',
                     quantity: 10
                 },
                 {
                     id: 2,
-                    color: '#0000ff',
+                    color: '#455bc0',
                     image: './assets/img/socks2.jpg',
                     quantity: 0
                 },
@@ -77,10 +71,7 @@ Vue.component('product', {
         },
         updateProduct(i) {
             this.selectedVariant = i
-        },
-        addReview(productReview) {
-            this.reviews.push(productReview)
-        }
+        } 
 
     },
     computed: {
@@ -96,6 +87,11 @@ Vue.component('product', {
         shipping() {
             return this.premium ? 'Free' : '$2.99'
         }
+    },
+    mounted() {
+        eventBus.$on('review-submitted', productReview => {
+            this.reviews.push(productReview)
+        })
     }
 })
 
@@ -103,28 +99,28 @@ Vue.component('product-review', {
     template: `
     <form class="review-form" @submit.prevent="onSubmit">
         <p>
-        <label for="name">Name:</label>
-        <input id="name" v-model="name" placeholder="name">
+            <label for="name">Name:</label>
+            <input id="name" v-model="name" placeholder="name">
         </p>
         
         <p>
-        <label for="review">Review:</label>      
-        <textarea id="review" v-model="review"></textarea>
+            <label for="review">Review:</label>      
+            <textarea id="review" v-model="review"></textarea>
         </p>
         
         <p>
-        <label for="rating">Rating:</label>
-        <select id="rating" v-model.number="rating">
-            <option>5</option>
-            <option>4</option>
-            <option>3</option>
-            <option>2</option>
-            <option>1</option>
-        </select>
+            <label for="rating">Rating:</label>
+            <select id="rating" v-model.number="rating">
+                <option>5</option>
+                <option>4</option>
+                <option>3</option>
+                <option>2</option>
+                <option>1</option>
+            </select>
         </p>
             
         <p>
-        <input type="submit" value="Submit">  
+            <input type="submit" value="Submit">  
         </p>    
     
     </form>
@@ -136,19 +132,60 @@ Vue.component('product-review', {
                 review: this.review,
                 rating: this.rating
             }
-            this.$emit('review-submitted', productReview)
+            eventBus.$emit('review-submitted', productReview)
             this.name = null
             this.review = null
             this.rating = null
         }
     },
     data() {
-      return {
-        name: null,
-        review: null,
-        rating: null,  
-      }
+        return {
+            name: null,
+            review: null,
+            rating: null,  
+        }
     }
+})
+
+Vue.component('product-tabs', {
+    props: {
+        reviews: {
+            type: Array,
+            required: true            
+        }
+    },
+    template: `
+    <div class="product-tabs">
+        <span 
+        v-for="(tab, index) in tabs"
+        class="tab"
+        v-bind:class="{activeTab: selectedTab == tab}"
+        v-bind:key="index"
+        @click="selectedTab = tab"> 
+        {{ tab }}</span>
+
+        <div v-show="selectedTab === 'Reviews'" class="reviews ">
+            <h2>Reviews</h2>
+            <p v-if="!reviews.length">There are no reviews yet.</p>
+            <ul>
+                <li v-for="review in reviews">
+                    <p>{{ review.name }}</p>
+                    <p>Rating: {{ review.rating }}</p>
+                    <p>{{ review.review }}</p>
+                </li>
+            </ul>
+        </div>
+
+        <product-review v-show="selectedTab === 'Make a Review'" ></product-review>
+
+    </div>
+    `,
+    data() {
+        return {
+            tabs: ['Reviews', 'Make a Review'],
+            selectedTab: 'Reviews'
+        }
+    }  
 })
 
 var app = new Vue({
